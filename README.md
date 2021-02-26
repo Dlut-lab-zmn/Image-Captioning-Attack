@@ -109,60 +109,47 @@ $ python tools/eval.py --image_folder coco_test_dataset --num_images 10
 **Attack**
 Please note, the following attack modes set the default `--model` and `--infos`.
 Next, we will provide several kinds of attack methods. If you want to modify the test model, please find the detail information from [model and infos section](#Model and infos)
-
+Researchers can change the search mode by setting --beam_size
+(python run.py --beam_size 3)
 
 - Targted Attack: Given one targeted image, generate adversarial examples that assign the same caption as this targeted image.
 (Before run the following code, you should put one image into the folder of target_label.)
 ```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --targeted
+$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --targeted
 ```
 Next, if you want test other targeted attacks, `--targeted` should be set.
 - Targeted_partical Attack: Given several words of a sent, complete the sent and generate the corresponding adversarial examples
 ```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --targeted --targeted_partical
+$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --targeted --targeted_partical
 ```
 - Targeted_key_word Appear Attack: Given several words. These words will appear in the generated caption. However, we do not pre-set the available position.
 ```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --targeted --targeted_key_word 'dog'
+$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --targeted --targeted_key_word 'dog'
 ```
 - Untargeted Attack: Generate new captions that different from the original caption.
 ```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3
+$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1
 ```
 - Non-order Untargeted Attack: This mode is a more efficient untargeted attack, which eliminates the influence of the word position. 
 ```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --non_order
+$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --non_order
 ```
 - Key_word_disappear Attack: Given one word you wish to disappear (e.g. man), this word will not appear in the generated captions.
  (You can set any word that you wish to protect to --key_word_disappear)
 ```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --key_word_disappear 'man'
+$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --key_word_disappear 'man'
 ```
 - Key_word_disappear Attack 2: Given one word  you wish to disappear (e.g. man, You can set any word that you wish to protect to --key_word_disappear), the related words (e.g. man, men, women...) will not appear in the generated captions. Using --using_similarity_space
 ```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --key_word_disappear 'man' --using_similarity_space
-```
-- Unseen_attack Untargeted Attack: We wish to maintain the meaning of the caption, but cover the special word. 
-```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --key_word_disappear 'man' --unseen_attack
-```
-- Ukd_mri Attack: untargeted keyword disappear + maintain rest information. We wish to maintain the meaning of the caption, but cover the special word. 
-The difference between the Unseen_attack and Ukd_mri attack is:
-    
-    1. Ori: A car parked next to the house.
-    2. keyword: car
-    3. Unseen_attack: The house next to the parked vehicle.
-    4. Ukd_mri: A vehicle parked next to the house.
-```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --key_word_disappear 'man' --ukd_mri
+$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --key_word_disappear 'man' --using_similarity_space
 ```
 - Replace_word Attack: 
 ```
-$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --ukd_mri --key_word_disappear 'man' --replace_word 'elephant'
+$ python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --ukd_mri --key_word_disappear 'man' --replace_word 'elephant'
 ```
-- Sup_word Attack
+- Targeted Embedding Attack
 ```
-$python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --beam_size 3 --sup_word 'black' --targeted  --model ./tools/model_show_and_tell.pth --infos_path ./tools/infos_show_and_tell.pkl
+$python tools/attack.py --image_folder coco_test_dataset --batch_size 1 --sup_word 'black' --targeted  --model ./tools/model_show_and_tell.pth --infos_path ./tools/infos_show_and_tell.pkl
 ```
 ##Model and infos
 
@@ -173,7 +160,6 @@ $ model_new_fc_self_cri.pth infos_new_fc_self_cri.pkl
 $ model_new_atti_self_cri.pth  infos_new_atti_self_cri.pkl
 $ model_transformer.pth  infos_transformer.pkl
 ```
-
 
 This tells the `eval` script to run up to 10 images from the given folder. If you have a big GPU you can speed up the evaluation by increasing `batch_size`. Use `--num_images -1` to process all images. The eval script will create an `vis.json` file inside the `vis` folder, which can then be visualized with the provided HTML interface:
 
@@ -224,6 +210,7 @@ If you find this repo useful, please consider citing (no obligation at all):
   journal={arXiv preprint arXiv:1803.04376},
   year={2018}
 }
+or our paper cite will be given once it has been accepted.
 ```
 
 Of course, please cite the original paper of models you are using (You can find references in the model files).
